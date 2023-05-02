@@ -1,12 +1,13 @@
-#LeakyFaucet v1.03.2
+#LeakyFaucet v1.04.1
 #Written: Mr.Waterhouse
-#April 26, 2023
+#May 2, 2023
 #
 #This DNS tunnelling script created as part of a fun little side project. It is designed to quickly test if DNS tunnelling is possible
-#in the environment. Simply put, is your existing security stack doing what it is supposed to do?
+#in the environment. Simply put, is your existing security stack doing what it is supposed to do? It also has the ability to embed
+#commands (in the form of server-side bash shell calls).
 #
-#Usage: .\leakyfaucet_1.02.0.ps1 "phoneNumber" "domain"
-#ie. .\leakyfaucet_1.02.0.ps1 "15555555555" "sampledomain.xyz"
+#Usage: .\leakyfaucet_1.04.1.ps1 "phoneNumber" "domain" "OPTIONAL_COMMAND"  <-- There must be a bash shell with the same name (.sh not required) on the server.
+#ie. .\leakyfaucet_1.04.1.ps1 "15555555555" "sampledomain.xyz"
 #
 #The phone number MUST have a leading 1 for country code. Eventually I'll get around to coding a check and adding in the country code if
 #it is missing but for now it will not work without it. More specifically, this script will still encode and send, but the server will not
@@ -26,8 +27,14 @@ param (
    [Parameter(Mandatory=$true)]
    [string]$cli_phone,
    [Parameter(Mandatory=$true)]
-   [string]$cli_domain
+   [string]$cli_domain,
+   [Parameter(Mandatory=$false)]
+   [string]$cli_command
 )
+#Assign x to $cli_command if an argument was not present
+if ($cli_command -eq $null -or $cli_command -eq "") {
+    $cli_command = "x"
+}
 
 # Generate a random 5-digit number to act as session id. This is required by the listener in order to differentiate traffic from multiple
 #users.
