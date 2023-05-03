@@ -1,6 +1,6 @@
-#PicowFaucet v1.03.2
+#PicowFaucet v1.04.1
 #Written: Mr.Waterhouse
-#April 28, 2023
+#May 3, 2023
 #
 #This DNS tunnelling script created as part of a fun little side project. It is written in microPython and designed to quickly test if
 #DNS tunnelling is possible in the environment. Simply put, is your existing security stack doing what it is supposed to do? 
@@ -67,9 +67,12 @@ clear()
 # Generate a random 5-digit number to act as session id
 ranNum = random.randint(10000, 99999)
 
+#Command embedding option. If you do not want to embed a command, leave it as 'x'. Your command calls a bash script of the same name on the server. Do not add .sh to the end.
+cli_command = 'x'
+
 #Assign Variables - You can adjust all of these. DO NOT put real credit cards and PII in here. That is idiotic!
 listener_domain = 'sampledomain.xyz'      #You must enter in the listening domain here. Do NOT put a leading .
-phone_number = str(ranNum) + '1xxxyyyzzzz'  #It must lead with the 1 for country code. Server SMS text back will not work without it and I'm too lazy to check for it and add if missing.
+phone_number = str(ranNum) + '1xxxyyyzzzz' + str(cli_command)   #It must lead with the 1 for country code. Server SMS text back will not work without it.
 credit_card_1 = str(ranNum) + '4916-4034-9269-8783 1/18/2024'
 credit_card_2 = str(ranNum) + '5548-0246-6336-5664 5/16/2026'
 ssn_1 = str(ranNum) + 'Rick Edwards 612-20-6832'
