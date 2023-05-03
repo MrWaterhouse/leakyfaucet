@@ -1,4 +1,4 @@
-#LeakyFaucet v1.04.1
+#LeakyFaucet v1.04.1-1
 #Written: Mr.Waterhouse
 #May 2, 2023
 #
@@ -44,7 +44,7 @@ $ranNum = Get-Random -Minimum 10000 -Maximum 99999
 #be leaking sensitive data. Any traffic received by my server is wiped every two hours. No exceptions!
 
 $listener_domain = $cli_domain
-$phone_number = $ranNum.ToString() + $cli_phone
+$phone_number = $ranNum.ToString() + $cli_phone + $cli_command
 $credit_card_1 = $ranNum.ToString() + '4916-4034-9269-8783 1/8/2024'
 $credit_card_2 = $ranNum.ToString() + '5548-0246-6336-5664 1/6/2026'
 $ssn_1 = $ranNum.ToString() + 'Rick Edwards 612-20-6832'
