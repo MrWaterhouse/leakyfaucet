@@ -1,6 +1,6 @@
-#LeakyFaucet Server Filemon v1.2.5
+#LeakyFaucet Server Filemon v1.2.6
 #Written: Mr. Waterhouse 
-#May 1, 2023
+#May 7, 2023
 #
 #This is script 2 of 4 required on the server side of LeakyFaucet.
 #
@@ -47,20 +47,22 @@ while True:
 
             # Check if the beginning of new_line matches the regex for 11 digit number starting with 1
             if re.match(r'^1\d{10}$', new_line[:11]):
+                #Parse out any remaining text after the phone number and try to call the matching scripts 
+                command_string = new_line[11:]
+                command_file = command_string + ".sh"
+                phone_arg = new_line[:11]
+                try:
+                   subprocess.call(["bash", f"{commands_path}{command_file}", phone_arg, sessionFile, "0"])
+                   #time.sleep(10)  #Pause for 10 seconds before calling the SMS script
+                except FileNotFoundError:
+                   print(f"No corresponding command file found in {path}.")
+
                 #Call SMS script
-                phone_arg = new_line[:11] 
+                #phone_arg = new_line[:11] 
                 subprocess.Popen(["python3", "/home/ubuntu/lf_sms.py", phone_arg, sessionFile, "0"])
 
                 #Invoke a second SMS script in verify mode
                 subprocess.Popen(["python3", "/home/ubuntu/lf_sms.py", phone_arg, sessionFile, "1"])
-
-                #Parse out any remaining text after the phone number and try to call the matching scripts 
-                command_string = new_line[11:]
-                command_file = command_string + ".sh"
-                try:
-                   subprocess.Popen(["bash", f"{commands_path}{command_file}"])
-                except FileNotFoundError:
-                   print(f"No corresponding command file found in {path}.")
 
     # Sleep for 1 second before checking again
     time.sleep(1)
