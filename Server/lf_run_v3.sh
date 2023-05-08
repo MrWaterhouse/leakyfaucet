@@ -1,18 +1,18 @@
 #!/bin/bash
 
-#LeakyFaucet Server RUN v3
+#LeakyFaucet Server RUN v3.1
 #Written: Mr. Waterhouse 
-#May 1, 2023
+#May 7, 2023
 #
 #This is script 4 of 4 required on the server side of LeakyFaucet.
 #
 #The Run bash script wipes the scratch and session data, then restarts the Listener and Filemon services. You can set a cron job to do this regularly.
 
 # 1. Search for a process containing 'lf_listener' and kill it using sudo kill
-sudo pkill -f lf_listener
+sudo systemctl stop lf_listener
 
 # 2. Search for a process containing 'lf_filemon' and kill it
-pkill -f lf_filemon
+sudo systemctl stop lf_filemon
 
 # 3. Remove /home/ubuntu/pico_data.txt
 rm /home/ubuntu/lf_data.txt
@@ -27,7 +27,9 @@ rm /home/ubuntu/nohup.out
 find /home/ubuntu/lf_exfil/* -mmin +10 -type f -print0 | xargs -0 rm -f
 
 # 7. Start Listener in the background and suppress console
-sudo nohup python3 /home/ubuntu/lf_listener_1.0.0.py &
+sudo systemctl start lf_listener
 
 # 8. Start Filemon in the background and suppress console
-nohup python3 /home/ubuntu/lf_filemon.py &
+sudo systemctl start lf_filemon
+
+exit 0
