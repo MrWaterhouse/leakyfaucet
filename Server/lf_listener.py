@@ -1,6 +1,6 @@
-#LeakyFaucet Server Listener v1.0.0
+#LeakyFaucet Server Listener v1.3.0
 #Written: Mr. Waterhouse - based on a script by: https://hinty.io/devforth/dns-exfiltration-of-data-step-by-step-simple-guide/
-#April 27, 2023
+#May 10, 2023
 #
 #This is script 1 of 4 required on the server side of LeakyFaucet.
 #
@@ -30,7 +30,7 @@ def my_script():
     seen_lines = set()
 
     #Define DNS data file.
-    filename = "/home/ubuntu/lf_data.txt"
+    filename = "/home/ubuntu/lfdata/lf_data.txt"
 
     while True:
         try:
