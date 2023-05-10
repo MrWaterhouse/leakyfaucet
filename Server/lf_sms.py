@@ -1,6 +1,6 @@
-#LeakyFaucet Server SMS Caller v1.2.6
+#LeakyFaucet Server SMS Caller v1.3.0
 #Written: Twilio Support with a few modifications by Mr.Waterhouse
-#May 3, 2023
+#May 10, 2023
 #
 #This is script 3 of 4 required on the server side of LeakyFaucet.
 #
@@ -39,11 +39,11 @@ contact_msg = "Leaky Faucet contacted! I'll let you know how you did in 3 minute
 verify_msg = " additional line(s) of data received after 3 minutes."
 
 #Assign SMS call log files
-whitelist_file = "/home/ubuntu/lf_phonelog/lf_phonewhitelist"   #If phone_num is not in this file, it will not send SMS
-unauthorized_file = "/home/ubuntu/lf_phonelog/unauthAttempts.log"  #All unauthorized attempts will be logged here.
-smsSent_file = "/home/ubuntu/lf_phonelog/smsSent.log"  #All authorized attempts will be logged here.
+whitelist_file = "/home/ubuntu/lfauth/lf_phone.auth"   #If phone_num is not in this file, it will not send SMS
+unauthorized_file = "/home/ubuntu/lflog/lf_unauthAttempts.log"  #All unauthorized attempts will be logged here.
+smsSent_file = "/home/ubuntu/lflog/lf_smsSent.log"  #All authorized attempts will be logged here.
 timeStamp = datetime.now()
-session_dir = "/home/ubuntu/lf_exfil/"
+session_dir = "/home/ubuntu/lfdata/lf_exfil/"
 
 #Read an external list of 'authorized' phone numbers and assign the contents to a variable
 with open(whitelist_file) as f:
