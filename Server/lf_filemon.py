@@ -1,6 +1,6 @@
-#LeakyFaucet Server Filemon v1.3.0
+#LeakyFaucet Server Filemon v1.4.0
 #Written: Mr. Waterhouse 
-#May 10, 2023
+#May 17, 2023
 #
 #This is script 2 of 4 required on the server side of LeakyFaucet.
 #
@@ -9,6 +9,8 @@
 #
 #Lastly, I've built in the ability to parse out embedded bash script commands from the phonenumber query. You have to prebuild
 #the bash scripts yourself or else nothing will happen.
+#v1.4 introduces the ability to call an ai script and send include all required info for the ai script to make a ChatGPT 3.5-turbo call.
+#This function requires you to use the leakyfaucetai.py script. (And eventually the leakyfaucetai.ps1 script).
 #
 #All data is written into a session specific file which can be used to manually validate the data recieved.
 
@@ -18,6 +20,13 @@ import os
 import time
 import re
 import subprocess
+
+#Define SMS Functions
+def send_sms():
+    subprocess.Popen(["python3", "/usr/local/bin/lf_sms.py", phone_arg, sessionFile, "0"])
+
+def send_smsval():
+    subprocess.Popen(["python3", "/usr/local/bin/lf_sms.py", phone_arg, sessionFile, "1"])
 
 # Path to the text file to watch, the folder for session logs, and the path containing addition command calls
 file_path = "/home/ubuntu/lfdata/lf_data.txt"
@@ -51,18 +60,29 @@ while True:
                 command_string = new_line[11:]
                 command_file = command_string + ".sh"
                 phone_arg = new_line[:11]
-                try:
-                   subprocess.call(["bash", f"{commands_path}{command_file}", phone_arg, sessionFile, "0"])
-                   #time.sleep(10)  #Pause for 10 seconds before calling the SMS script
-                except FileNotFoundError:
-                   print(f"No corresponding command file found in {path}.")
 
-                #Call SMS script
-                #phone_arg = new_line[:11] 
-                subprocess.Popen(["python3", "/usr/local/bin/lf_sms.py", phone_arg, sessionFile, "0"])
-
-                #Invoke a second SMS script in verify mode
-                subprocess.Popen(["python3", "/usr/local/bin/lf_sms.py", phone_arg, sessionFile, "1"])
+                if len(command_string) == 0:
+                    send_sms()
+                    send_smsval()
+                elif command_string == "aind":
+                    command_file = "ai.sh"
+                    combined = f"{commands_path}{command_file}"
+                    print(combined)
+                    try:
+                        subprocess.Popen(["bash", f"{commands_path}{command_file}", phone_arg, sessionFile])
+                    except FileNotFoundError:
+                        print(f"No corresponding command file found in {commands_path}.")
+                elif command_string == "ai":
+                    command_string = ""
+                    send_sms()
+                    send_smsval()
+                else:
+                    try:
+                        subprocess.call(["bash", f"{commands_path}{command_file}", phone_arg, sessionFile, "0"])
+                    except FileNotFoundError:
+                        print(f"No corresponding command file found in {commands_path}.")
+                    send_sms()
+                    send_smsval()
 
     # Sleep for 1 second before checking again
     time.sleep(1)
